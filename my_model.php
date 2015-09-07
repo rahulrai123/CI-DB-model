@@ -1,6 +1,6 @@
 <?php if(!defined('BASEPATH')) exit('No direct script access allowed');
   
-Class Default_setting_model extends CI_Model
+Class Standard_model extends CI_Model
 {
 	function __construct()
 	{
@@ -43,9 +43,8 @@ Class Default_setting_model extends CI_Model
 			$this->left_join       = ( isset($data['left_join']) ) ? $data['left_join'] :  null;
 			$this->groupby         = (isset($data['group_by'])) ? $data['group_by'] : null;
 			$this->order_by        = (isset($data['order_by'])) ? $data['order_by'] : null;
-			$this->having        = (isset($data['having'])) ? $data['having'] : null;
+
 			$this->limit           = (isset($data['limit'])) ? $data['limit'] : null;
-			$this->offset           = (isset($data['offset'])) ? $data['offset'] : 0;
 			//$this->or_where_in_field = (isset($data['or_where_in_field'])) ? $data['or_where_in_field'] : null;
 			$this->or_where_in     = (isset($data['or_where_in'])) ? $data['or_where_in'] : null;
 		}
@@ -116,8 +115,8 @@ Class Default_setting_model extends CI_Model
 		}
 
 		if( $this->limit ){
-			 $this->db->limit( $this->limit, $this->offset );
-			//$this->db->limit( $this->limit );
+			// $this->db->limit( $this->limit, $this->offset );
+			$this->db->limit( $this->limit );
 		}
 
 		$result = $this->db->get();
