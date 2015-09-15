@@ -2,152 +2,163 @@
   
 Class Standard_model extends CI_Model
 {
-	function __construct()
-	{
-	  parent::__construct();
-	}
+    function __construct()
+    {
+      parent::__construct();
+    }
 
-	private $table = null;
-	private $condition = null;
-	private $join = null;
-	private $right_join = null;
-	private $left_join = null;
-	private $field = null;
-	private $select_as_array = null;
-	private $limit = null;
-	private $offset = 0;
-	private $groupby = null;
-	private $order_by = null;
-	private $or_where_in = null;
-	private $having = null;
-	/* This function used to set private variables which is required for DB queries*/
+    private $table = null;
+    private $condition = null;
+    private $join = null;
+    private $right_join = null;
+    private $left_join = null;
+    private $field = null;
+    private $select_as_array = null;
+    private $limit = null;
+    private $offset = 0;
+    private $groupby = null;
+    private $order_by = null;
+    private $or_where_in = null;
+    private $having = null;
+    private $insert_batch = null;
 
-	public function set_query_data($data){
+    /* This function used to set private variables which is required for DB queries*/
 
-		if( count($data) ){
-			
-			$this->table = ( isset($data['table']) ) ? $data['table'] :  null;
+    public function set_query_data($data){
 
-			if($this->table == null){
-				return "missing table name";
-			}
+        if( count($data) ){
+            
+            $this->table = ( isset($data['table']) ) ? $data['table'] :  null;
 
-			$this->condition       = ( isset($data['condition']) ) ? $data['condition'] :  null;
+            if($this->table == null){
+                return "missing table name";
+            }
 
-			$this->field           = ( isset($data['field']) ) ? $data['field'] :  null;
+            $this->condition       = ( isset($data['condition']) ) ? $data['condition'] :  null;
 
-			$this->select_as_array = ( isset($data['select_as_array']) ) ? $data['select_as_array'] : false;
+            $this->field           = ( isset($data['field']) ) ? $data['field'] :  null;
 
-			$this->join            = ( isset($data['join']) ) ? $data['join'] :  null;
-			$this->right_join      = ( isset($data['right_join']) ) ? $data['right_join'] :  null;
-			$this->left_join       = ( isset($data['left_join']) ) ? $data['left_join'] :  null;
-			$this->groupby         = (isset($data['group_by'])) ? $data['group_by'] : null;
-			$this->order_by        = (isset($data['order_by'])) ? $data['order_by'] : null;
+            $this->select_as_array = ( isset($data['select_as_array']) ) ? $data['select_as_array'] : false;
 
-			$this->limit           = (isset($data['limit'])) ? $data['limit'] : null;
-			//$this->or_where_in_field = (isset($data['or_where_in_field'])) ? $data['or_where_in_field'] : null;
-			$this->or_where_in     = (isset($data['or_where_in'])) ? $data['or_where_in'] : null;
-		}
-		else{
+            $this->join            = ( isset($data['join']) ) ? $data['join'] :  null;
+            $this->right_join      = ( isset($data['right_join']) ) ? $data['right_join'] :  null;
+            $this->left_join       = ( isset($data['left_join']) ) ? $data['left_join'] :  null;
+            $this->groupby         = (isset($data['group_by'])) ? $data['group_by'] : null;
+            $this->order_by        = (isset($data['order_by'])) ? $data['order_by'] : null;
 
-			return "missing parmeters";
-		}
-	}
+            $this->limit           = (isset($data['limit'])) ? $data['limit'] : null;
+            $this->offset           = (isset($data['offset'])) ? $data['offset'] : null;
+            //$this->or_where_in_field = (isset($data['or_where_in_field'])) ? $data['or_where_in_field'] : null;
+            $this->or_where_in     = (isset($data['or_where_in'])) ? $data['or_where_in'] : null;
+            $this->insert_batch     = (isset($data['insert_batch'])) ? $data['insert_batch'] : null;
+        }
+        else{
 
-	public function select(){
+            return "missing parmeters";
+        }
+    }
 
-		if( !$this->db->table_exists( $this->table ) )
-		{
-			return;
-		}
-			
-		
-		$this->db->select( $this->field )->from( $this->table );
+    public function select(){
 
-		if( $this->join ){ 
-		// Here check for join is set if it is join operation is performed
-			foreach ( $this->join as $table_name => $join_condition ) {
-				$this->db->join( $table_name , $join_condition);
-			}
-		}
+        if( !$this->db->table_exists( $this->table ) )
+        {
+            return;
+        }
+            
+        
+        $this->db->select( $this->field )->from( $this->table );
 
-		if( $this->right_join ){ 
-		// Here check for join is set if it is join operation is performed
-			foreach ( $this->right_join as $table_name => $join_condition ) {
-				$this->db->join( $table_name , $join_condition, 'RIGHT');
-			}
-		}
+        if( $this->join ){ 
+        // Here check for join is set if it is join operation is performed
+            foreach ( $this->join as $table_name => $join_condition ) {
+                $this->db->join( $table_name , $join_condition);
+            }
+        }
 
-		if( $this->left_join ){ 
-		// Here check for join is set if it is join operation is performed
-			foreach ( $this->left_join as $table_name => $join_condition ) {
-				$this->db->join( $table_name , $join_condition, 'LEFT');
-			}
-		}
+        if( $this->right_join ){ 
+        // Here check for join is set if it is join operation is performed
+            foreach ( $this->right_join as $table_name => $join_condition ) {
+                $this->db->join( $table_name , $join_condition, 'RIGHT');
+            }
+        }
 
-		if( $this->condition ){
-			// Here check for condition if condition is set where condition is applied
-			$this->db->where( $this->condition );
+        if( $this->left_join ){ 
+        // Here check for join is set if it is join operation is performed
+            foreach ( $this->left_join as $table_name => $join_condition ) {
+                $this->db->join( $table_name , $join_condition, 'LEFT');
+            }
+        }
 
-		}
+        if( $this->condition ){
+            // Here check for condition if condition is set where condition is applied
+            $this->db->where( $this->condition );
 
-		if($this->or_where_in){
-			$this->db->where_in( $this->or_where_in['or_where_in_field'], $this->or_where_in['where_in_array'] );
-		}
+        }
 
-		if($this->groupby){
-			foreach ( $this->groupby as  $groupby ) {
-				$this->db->group_by( $groupby );
-			}
-			
-		}
+        if($this->or_where_in){
+            $this->db->where_in( $this->or_where_in['or_where_in_field'], $this->or_where_in['where_in_array'] );
+        }
 
-		if( $this->having ){
-	      // Here applying condition with having clause
-	      $this->db->having( $this->having );
-	    }
-	    
-		if($this->order_by){
-			foreach ( $this->order_by as  $order_by ) {
-				$this->db->order_by( $order_by );
-			}
-			
-		}
+        if($this->groupby){
+            foreach ( $this->groupby as  $groupby ) {
+                $this->db->group_by( $groupby );
+            }
+            
+        }
 
-		if( $this->limit ){
-			// $this->db->limit( $this->limit, $this->offset );
-			$this->db->limit( $this->limit );
-		}
+        if( $this->having ){
+          // Here applying condition with having clause
+          $this->db->having( $this->having );
+        }
+        
+        if($this->order_by){
+            foreach ( $this->order_by as  $order_by ) {
+                $this->db->order_by( $order_by );
+            }
+            
+        }
 
-		$result = $this->db->get();
+        if( $this->limit ){
+            // $this->db->limit( $this->limit, $this->offset );
 
-		/*Here check for num rows returned by query if num rows <=1 then row() is returned otherwise result is returned*/
+            if (isset($this->offset)) {
+                $this->db->limit( $this->limit, $this->offset );
+            } else {
+                $this->db->limit( $this->limit );
+            }
+        }
 
-		if( $result->num_rows <= 1 )
-		{
-			return $result->row();
-		} else {
-			if ($this->select_as_array) {
-				return $result->result_array();
-			} else {
-				return $result->result();
-			}
-		}
-	}
+        $result = $this->db->get();
 
-	public function insert( $data = '' ){
+        /*Here check for num rows returned by query if num rows <=1 then row() is returned otherwise result is returned*/
 
-		return $this->db->insert( $this->table , $data );
-	}
+        if( $result->num_rows <= 1 )
+        {
+            return $result->row();
+        } else {
+            if ($this->select_as_array) {
+                return $result->result_array();
+            } else {
+                return $result->result();
+            }
+        }
+    }
 
-	public function delete(){
+    public function insert( $data = '' ){
+        if( $this->insert_batch )
+            return $this->db->insert_batch( $this->table , $data); 
+        else
+            return $this->db->insert( $this->table , $data );
+    }
 
-		return $this->db->delete( $this->table , $this->condition );
-	}
+    public function delete(){
 
-	public function update( $data ){
-		 $this->db->where( $this->condition );
-		 return $this->db->update( $this->table, $data );
-	}
+        return $this->db->delete( $this->table , $this->condition );
+    }
+
+    public function update( $data ){
+         $this->db->where( $this->condition );
+         return $this->db->update( $this->table, $data );
+    }
 }
 ?>
